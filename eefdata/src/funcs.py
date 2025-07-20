@@ -749,6 +749,7 @@ class DataFrameCompilation:
         if verbose:
             self.data_extraction.verbose_display(all_variables)
         
+        outfile1=None
         if save_file:
             outfile1 = self.data_extraction.save_dataframe(all_variables, "_DataFrame1.csv", standard_info=True)
         

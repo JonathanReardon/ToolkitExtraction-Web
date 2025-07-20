@@ -3,8 +3,11 @@ from pathlib import Path
 from tempfile import mkdtemp
 from flask import (
     Flask, render_template, request, redirect,
-    url_for, send_file, flash,
+    url_for, send_file, flash
 )
+
+from eefdata.src.funcs import JSONDataExtractor, DataFrameCompilation
+import json
 
 from eefdata.api import create_csv, list_tiles
 
@@ -25,28 +28,43 @@ def run_tile(json_path: Path, tile_id: int, *, strand: str | None = None) -> Pat
 @app.route("/select", methods=["GET", "POST"])
 def select_page():
     filename = None
+    df1_row_count = None
 
     if request.method == "POST":
-        # handle file upload
         f = request.files.get("json_file")
         if not f or not f.filename.lower().endswith(".json"):
             flash("Please choose a .json file")
             return redirect(request.url)
+
         filename = f.filename
+        file_bytes = f.read()
+
+        # Save uploaded JSON to disk first
         save_path = UPLOAD_DIR / filename
-        f.save(save_path)
+        with open(save_path, 'wb') as out_file:
+            out_file.write(file_bytes)
+
+        # Then pass file path to extractor and compile dataframe
+        extractor = JSONDataExtractor(json_path=save_path)
+        compiler = DataFrameCompilation(extractor)
+        df1, _ = compiler.make_dataframe_1(save_file=False)
+
+        # Get row count for the template
+        df1_row_count = len(df1)
+
     else:
-        # when coming via redirect with ?filename=…
         filename = request.args.get("filename")
 
-    # always list all tiles — so your table rows always render
     tiles = list_tiles()
 
     return render_template(
         "select.html",
         filename=filename,
         tiles=tiles,
+        df1_row_count=df1_row_count,
     )
+
+
 
 @app.route("/download/<filename>/<int:tile_id>")
 def download(filename, tile_id):

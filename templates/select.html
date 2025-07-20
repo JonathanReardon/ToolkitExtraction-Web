@@ -105,6 +105,12 @@
     </div>
   {% endif %}
 
+  {% if df1_row_count is not none %}
+    <div class="filename-display" style="margin-top: 1rem;">
+      Number of Studies: <strong>{{ df1_row_count }}</strong>
+    </div>
+  {% endif %}
+
   <!-- data-frames table -->
   <table class="tile-table">
     <thead>
