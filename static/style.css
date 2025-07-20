@@ -1,0 +1,180 @@
+/* ------------- base resets & tokens ------------------------------- */
+*,*::before,*::after { box-sizing: border-box; margin:0; padding:0 }
+
+:root {
+  --bg-main: #f1f5f9;
+  --bg-card: #ffffff;
+  --bg-head: #0f172a;
+  --bg-row: #f9fafb;
+  --bg-row-hover: #eef2ff;
+  --clr-text: #0f172a;
+  --clr-head: #ffffff;
+  --clr-btn: #2563eb;
+  --clr-btn-info: #334155;
+  --radius: 8px;
+  --shadow: 0 2px 6px rgba(0,0,0,.075);
+  font:16px/1.45 system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+  color: var(--clr-text);
+}
+
+/* ------------- page layout --------------------------------------- */
+body {
+  background: var(--bg-main);
+  padding: 2rem;
+}
+
+/* ------------- upload card --------------------------------------- */
+.card {
+  background: var(--bg-card);
+  padding: 2.5rem 3rem;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  max-width: 420px;
+  margin: auto;
+  text-align: center;
+}
+.card h1      { margin-bottom: 1.5rem; font-size: 1.35rem; }
+.card input   { margin-bottom: 1rem; }
+.card button  {
+  background: var(--clr-btn);
+  border: none;
+  color: #fff;
+  padding: .65rem 1.25rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+.card button:hover { filter: brightness(1.08); }
+
+/* ------------- data-table ---------------------------------------- */
+.tile-table {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  border-collapse: collapse;
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.tile-table thead {
+  background: var(--bg-head);
+  color: var(--clr-head);
+}
+.tile-table th,
+.tile-table td {
+  padding: .85rem 1.1rem;
+  text-align: left;
+}
+.tile-table tbody tr:nth-child(odd)  { background: var(--bg-row); }
+.tile-table tbody tr:hover          { background: var(--bg-row-hover); }
+.tile-table th:first-child,
+.tile-table td:first-child         { width: 25%; }
+.tile-table td:nth-child(2)        { width: 45%; }
+.tile-table td:nth-child(3),
+.tile-table td:nth-child(4)        { width: 15%; text-align: center; }
+
+/* ------------- buttons ------------------------------------------- */
+.btn {
+  display: inline-block;
+  padding: .55rem 1rem;
+  border-radius: var(--radius);
+  font-size: .95rem;
+  color: #fff;
+  text-decoration: none;
+}
+.btn--dl  { background: var(--clr-btn); }
+.btn--info{ background: var(--clr-btn-info); }
+.btn--dl:hover,
+.btn--info:hover { filter: brightness(1.1); }
+
+/* ------------- special row styles -------------------------------- */
+.group-row td { background: #e2e8f0; font-weight: 600; }
+.sub-name      { padding-left: 2rem; }
+
+/* ------------- sliding drawer (outer row) ------------------------- */
+.toggle-row { cursor: pointer; }
+
+/* ------------- inner animated container --------------------------- */
+.info-cell {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height .5s ease-in-out;  /* 0.2s pause before anim */
+}
+
+/* ------------- info-cell when open ------------------------------- */
+.info-row.open .info-cell {
+  max-height: 1200px; /* match the inline style in select.html */
+}
+
+/* ------------- panel content box ----------------------------------- */
+.info-box {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,.06);
+  border-radius: 0;
+
+}
+/* typography inside the box */
+.info-box h3 { margin: 0 0 .75rem; font-size:1.1rem; font-weight:600; }
+.info-box p  { margin: 0 0 .75rem; }
+.info-box ul { list-style: disc; padding-left: 1.3rem; margin: 0 0 .8rem; }
+.info-box li{ margin-bottom: .35rem; }
+.info-box a { color: var(--clr-btn); text-decoration:underline; }
+.info-box a:hover { filter:brightness(1.15); }
+
+
+* slide logic on the inner box */
+.info-box {
+  max-height: 0;
+  overflow: hidden;
+  /* make this as slow as you like (and add a small delay) */
+  transition: max-height .4s ease-in-out;
+}
+
+/* when the row has .open, allow the box to expand to its full height */
+.info-row.open .info-box {
+  max-height: 1200px; /* or whatever “big enough” is for your content */
+
+}
+
+
+
+/* ——————————————————————————  
+   Make the Download/Info buttons a bit more compact  
+   —————————————————————————— */
+.btn--dl,
+.btn--info {
+  padding: 0.35rem 0.75rem;    /* shrink vertical & horizontal padding */
+  font-size: 0.85rem;          /* slightly smaller text */
+  min-width: 0;                /* let them size to content */
+}
+
+/* ——————————————————————————  
+   Centre the “Download” & “Details” headers over their buttons  
+   —————————————————————————— */
+.tile-table thead th:nth-child(3),
+.tile-table thead th:nth-child(4) {
+  text-align: center;
+}
+
+
+
+/* make the Download/Details column headers centre under the buttons */
+.tile-table th:nth-child(3),
+.tile-table th:nth-child(4) {
+  text-align: center;
+}
+
+/* slightly smaller, more compact buttons */
+.btn {
+  padding: .4rem .8rem;
+  font-size: .85rem;
+  min-width: 80px;    /* keep them a consistent width if you like */
+}
+
+
+/* ------------- scrollbar stability ------------------------------- */
+html { scrollbar-gutter: stable; overflow-y: scroll; }
+

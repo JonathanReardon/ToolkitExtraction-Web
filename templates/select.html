@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Select & Download Dataframes</title>
+
+  <!-- shared stylesheet -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+  <style>
+    :root {
+      --bg-card: #ffffff;
+      --clr-btn: #2563eb;
+      --clr-btn-info: #334155;
+      --radius: 8px;
+      --shadow: 0 2px 6px rgba(0,0,0,.075);
+    }
+
+    /* Upload section */
+    .upload-section {
+      background: var(--bg-card);
+      padding: 1rem;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      max-width: 600px;
+      margin: 2rem auto;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .upload-section input[type=file] {
+      flex: 1;
+      padding: 0.5rem;
+      border: 1px solid #cbd5e1;
+      border-radius: var(--radius);
+      cursor: pointer;
+    }
+    .upload-section button {
+      background: var(--clr-btn);
+      color: #fff;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: var(--radius);
+      cursor: pointer;
+    }
+    .upload-section button:hover { filter: brightness(1.1); }
+
+    /* Filename display */
+    .filename-display {
+      max-width: 600px;
+      margin: 1rem auto;
+      padding: 0.75rem;
+      background: #f1f5f9;
+      border-radius: var(--radius);
+      color: #0f172a;
+      font-weight: 500;
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+
+    /* Disabled button */
+    .btn--disabled {
+      background: #cbd5e1 !important;
+      color: #94a3b8 !important;
+      cursor: not-allowed;
+      opacity: 0.7;
+      pointer-events: none;
+    }
+
+    /* Hide panels by default, show when .open */
+    .info-row { display: none; }
+    .info-row.open { display: table-row; }
+
+    /* Hover highlight on row */
+    .tile-table tbody tr.toggle-row:hover > td {
+      background: var(--bg-row-hover);
+    }
+
+    /* Panel-6 sub-options alignment */
+    .panel-6 .info-cell .sub-options {
+      display: grid;
+      grid-template-columns: 25% 45% 15% 15%;
+      align-items: center;
+      row-gap: 0.5rem;
+      column-gap: 1rem;
+      padding: 0;
+      justify-items: center;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Upload JSON form -->
+  <form id="uploadForm" method="post" action="{{ url_for('select_page') }}" enctype="multipart/form-data">
+    <div class="upload-section">
+      <input type="file" name="json_file" accept=".json" required>
+      <button type="submit">Upload JSON</button>
+    </div>
+  </form>
+
+  {% if filename %}
+    <div class="filename-display">
+      Loaded file: <strong>{{ filename }}</strong>
+    </div>
+  {% endif %}
+
+  <!-- data-frames table -->
+  <table class="tile-table">
+    <thead>
+      <tr>
+        <th>Data frame</th>
+        <th>Description</th>
+        <th>Download</th>
+        <th>Details</th>
+      </tr>
+    </thead>
+
+    {% set descs = {
+      1: 'Study, Research and Design Variables',
+      2: 'Intervention Details',
+      3: 'Sample Size Variables',
+      4: 'Descriptive Statistics',
+      5: 'Outcome Details',
+      6: 'Key Variables for Data Analysis',
+      7: 'Raw Outcome Data',
+      8: 'Study Security Calculations',
+      9: 'Strand Level Padlock Data',
+      10:'Data for Constructing Study References'
+    } %}
+    {% set panel_counts = {
+      1: {'_raw': 21, '_ht': 20, '_info': 21, '_CLEAN':23, 'Total':85},
+      2: {'_raw': 23, '_ht': 21, '_info': 21, '_CLEAN':22, 'Total':86},
+      3: {'_raw': 9,  '_ht': 15, '_info': 16, '_CLEAN':17, 'Total':57},
+      4: {'_raw': 7,  '_ht': 34, '_info': 35, '_CLEAN':34, 'Total':110},
+      5: {'_raw': 118,'_ht': 0,  '_info': 1,  '_CLEAN':113,'Total':232},
+      7: {'_raw': 'All','_ht': 0, '_info': 0, '_CLEAN': 0, 'Total':'NA'},
+      8: {'_raw': 18, '_ht': 0,  '_info': 3,  '_CLEAN':0,   'custom':44,'Total':44},
+      9: {'_raw': 16,'_ht': 15, '_info': 16, '_CLEAN':20, 'Total':67},
+      10:{'_raw':14,'_ht':13, '_info':14, '_CLEAN':18, 'Total':59}
+    } %}
+    {% set panel_descs = {
+      1: "This dataframe contains 'raw', 'ht', 'info', and 'CLEAN' data types.",
+      2: "This dataframe contains intervention-level data including codes and descriptions.",
+      3: "This dataframe contains sample size information across studies.",
+      4: "This dataframe contains descriptive statistics for outcomes.",
+      5: "This dataframe contains outcome labels and effect sizes.",
+      7: "This dataframe contains raw outcome data for all participants.",
+      8: "This dataframe contains 'raw' and 'info' data types, as well as 44 custom columns used to assess the variables considered to be at risk of affecting research validity or bias.",
+      9: "This dataframe contains lock-step padlock metrics for strand-specific analysis.",
+      10:"This dataframe contains reference table data used for citation construction."
+    } %}
+    {% set strands = [
+      ('arts_participation','Arts participation'),
+      ('behaviour_int','Behaviour intervention'),
+      ('collab_learning','Collaborative Learning'),
+      ('early_literacy_approaches','Early Literacy Approaches'),
+      ('early_numeracy_approaches','Early Numeracy Approaches'),
+      ('extended_school_time','Extended School Time'),
+      ('earlier_starting_age','Earlier Starting Age'),
+      ('play_based_learning','Play Based Learning'),
+      ('feedback','Feedback'),
+      ('homework','Homework'),
+      ('individual_instruction','Individual Instruction'),
+      ('all','All strands together')
+    ] %}
+
+    <tbody>
+      {% for id, label in tiles.items() %}
+        {% if id == 6 %}
+          <tr class="group-row toggle-row panel-6-header">
+            <td>6 — {{ label }}</td>
+            <td>{{ descs[6] }}</td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr class="info-row panel-6">
+            <td colspan="4">
+              <div class="info-cell">
+                {% for slug, pretty in strands %}
+                  <div class="sub-options">
+                    <div class="sub-name">{{ pretty }}</div>
+                    <div class="sub-desc">(strand-specific extract)</div>
+                    <a
+                      class="btn btn--dl {% if not filename %}btn--disabled{% endif %}"
+                      onclick="event.stopPropagation()"
+                      {% if filename %}
+                        href="{{ url_for('download', filename=filename, tile_id=6, strand=slug) }}"
+                      {% endif %}>
+                      ⬇ Download File
+                    </a>
+                    <a
+                      class="btn btn--info {% if not filename %}btn--disabled{% endif %}"
+                      onclick="event.stopPropagation()"
+                      {% if filename %}
+                        href="{{ url_for('details', tile_id=6, strand=slug) }}"
+                      {% endif %}>
+                      ℹ️ Info
+                    </a>
+                  </div>
+                {% endfor %}
+              </div>
+            </td>
+          </tr>
+
+        {% else %}
+          <tr class="group-row toggle-row panel-{{ id }}-header">
+            <td>{{ id }} — {{ label }}</td>
+            <td>{{ descs[id] }}</td>
+            <td>
+              <a
+                class="btn btn--dl {% if not filename %}btn--disabled{% endif %}"
+                onclick="event.stopPropagation()"
+                {% if filename %}
+                  href="{{ url_for('download', filename=filename, tile_id=id) }}"
+                {% endif %}>
+                ⬇ Download File
+              </a>
+            </td>
+            <td>
+              <a
+                class="btn btn--info {% if not filename %}btn--disabled{% endif %}"
+                onclick="event.stopPropagation()"
+                {% if filename %}
+                  href="{{ url_for('details', tile_id=id) }}"
+                {% endif %}>
+                ℹ️ Info
+              </a>
+            </td>
+          </tr>
+          <tr class="info-row panel-{{ id }}">
+            <td colspan="4">
+              <div class="info-cell">
+                <div class="info-box">
+                  <h3>{{ label }} Details</h3>
+                  <p>{{ panel_descs[id]|safe }}</p>
+                  <table class="panel-table">
+                    <thead>
+                      <tr>
+                        <th>Data Type</th>
+                        <th>Description</th>
+                        <th>Number of Columns</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% set cnt = panel_counts[id] %}
+                      <tr><td>_raw</td><td>raw data as input by the data coders</td><td>{{ cnt._raw }}</td></tr>
+                      <tr><td>_ht</td><td>text highlighted from the manuscript</td><td>{{ cnt._ht }}</td></tr>
+                      <tr><td>_info</td><td>any 'user' entered info</td><td>{{ cnt._info }}</td></tr>
+                      <tr><td>_CLEAN</td><td>empty columns for data cleaning notes</td><td>{{ cnt._CLEAN }}</td></tr>
+                      {% if cnt.custom is defined %}
+                        <tr><td>custom</td><td>additional calculated columns</td><td>{{ cnt.custom }}</td></tr>
+                      {% endif %}
+                      <tr><td>Total Number of Columns</td><td>&nbsp;</td><td>{{ cnt.Total }}</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </td>
+          </tr>
+        {% endif %}
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.toggle-row').forEach(row => {
+        row.addEventListener('click', () => {
+          const d = row.nextElementSibling;
+          if (d?.classList.contains('info-row')) d.classList.toggle('open');
+        });
+      });
+    });
+  </script>
+
+</body>
+</html>
