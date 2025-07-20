@@ -125,64 +125,178 @@
 
 
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
 {% if df9_data %}
-  <div style="display: flex; justify-content: center; margin-top: 3em;">
-    <div style="
-      background-color: #fff;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      padding: 2em;
-      max-width: 800px;
-      width: 100%;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      font-size: 15px;
-      line-height: 1.6;
-    ">
-      <h2 style="text-align: center; margin-bottom: 1.5em;">Padlocks Overview</h2>
+<div class="padlock-card">
+  <h2><i class="fas fa-lock"></i> Padlocks Overview</h2>
 
-      <!-- Primary fields -->
-      <div><strong>Strand:</strong> {{ df9_data['strand'] }}</div>
-      <div><strong>Number of studies:</strong> {{ df9_data['number_of_studies'] }}</div>
-      <div><strong>Initial padlock:</strong> {{ df9_data['number_of_studies_padlock_scale'] }}</div>
+  <div class="primary-info">
+    <div><strong>Strand:</strong> {{ df9_data['strand'] }}</div>
+    <div><strong>Number of studies:</strong> {{ df9_data['number_of_studies'] }}</div>
+    <div><strong>Initial padlock:</strong> {{ df9_data['number_of_studies_padlock_scale'] }}</div>
+  </div>
 
-      <hr style="margin: 1.5em 0;">
-
-      <!-- Grouped metrics -->
-      <div style="
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        row-gap: 1em;
-        column-gap: 2em;
-      ">
+  <div class="grid">
+    <div class="cell blue">
+      <div class="cell-inner">
+        <i class="fas fa-calendar-alt"></i>
         <div>
-          <strong>% since 2000:</strong> {{ df9_data['%_since_2000'] }}<br>
-          <strong>Padlock scale:</strong> {{ df9_data['%_since_2000_padlock_scale'] }}
+          <div class="value">{{ df9_data['%_since_2000'] }}%</div>
+          <div class="label">Since 2000</div>
+          <span class="tag">{{ df9_data['%_since_2000_padlock_scale'] }}</span>
         </div>
+      </div>
+    </div>
+    <div class="cell purple">
+      <div class="cell-inner">
+        <i class="fas fa-random"></i>
         <div>
-          <strong>% Randomised:</strong> {{ df9_data['%_randomised'] }}<br>
-          <strong>Padlock scale:</strong> {{ df9_data['%_randomised_padlock_scale'] }}
+          <div class="value">{{ df9_data['%_randomised'] }}%</div>
+          <div class="label">Randomised</div>
+          <span class="tag">{{ df9_data['%_randomised_padlock_scale'] }}</span>
         </div>
+      </div>
+    </div>
+    <div class="cell green">
+      <div class="cell-inner">
+        <i class="fas fa-leaf"></i>
         <div>
-          <strong>% high Ecologically Valid:</strong> {{ df9_data['%_high_eco_valid'] }}<br>
-          <strong>Padlock scale:</strong> {{ df9_data['%_high_eco_valid_padlock_scale'] }}
+          <div class="value">{{ df9_data['%_high_eco_valid'] }}%</div>
+          <div class="label">High Eco Valid</div>
+          <span class="tag">{{ df9_data['%_high_eco_valid_padlock_scale'] }}</span>
         </div>
+      </div>
+    </div>
+    <div class="cell teal">
+      <div class="cell-inner">
+        <i class="fas fa-user-check"></i>
         <div>
-          <strong>% Independently Evaluated:</strong> {{ df9_data['%_indep_eval'] }}<br>
-          <strong>Padlock scale:</strong> {{ df9_data['%_indep_eval_padlock_scale'] }}
+          <div class="value">{{ df9_data['%_indep_eval'] }}%</div>
+          <div class="label">Indep. Evaluated</div>
+          <span class="tag">{{ df9_data['%_indep_eval_padlock_scale'] }}</span>
         </div>
+      </div>
+    </div>
+    <div class="cell orange">
+      <div class="cell-inner">
+        <i class="fas fa-chart-line"></i>
         <div>
-          <strong>% Median attrition Reported:</strong> {{ df9_data['%_median_attrit_reported'] }}<br>
-          <strong>Padlock scale:</strong> {{ df9_data['%_median_attrit_reported_padlock_scale'] }}
+          <div class="value">{{ df9_data['%_median_attrit_reported'] }}%</div>
+          <div class="label">Attrition Reported</div>
+          <span class="tag">{{ df9_data['%_median_attrit_reported_padlock_scale'] }}</span>
         </div>
+      </div>
+    </div>
+    <div class="cell gray">
+      <div class="cell-inner">
+        <i class="fas fa-key"></i>
         <div>
-          <strong>Final Padlock:</strong> {{ df9_data['New_padlock'] }}<br>
-          <strong>MA floor:</strong> {{ df9_data['MA_floor'] }}
+          <div class="value">{{ df9_data['New_padlock'] }}</div>
+          <div class="label">Final Padlock</div>
+          <span class="tag">{{ df9_data['MA_floor'] }}</span>
         </div>
       </div>
     </div>
   </div>
+</div>
 {% endif %}
+
+<style>
+.padlock-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 2em;
+  margin: 3em auto;
+  max-width: 960px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+}
+
+.padlock-card h2 {
+  text-align: center;
+  font-size: 1.8em;
+  margin-bottom: 1em;
+  color: #222;
+}
+
+.primary-info {
+  text-align: center;
+  margin-bottom: 2em;
+  font-size: 1.05em;
+}
+
+.primary-info div {
+  margin: 0.5em 0;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5em;
+}
+
+.cell {
+  border-radius: 12px;
+  padding: 1.5em;
+  color: white;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: default;
+}
+
+.cell:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.cell-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1em;
+  text-align: left;
+}
+
+.cell i {
+  font-size: 2em;
+  opacity: 0.85;
+}
+
+.value {
+  font-size: 1.6em;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.label {
+  font-size: 0.9em;
+  opacity: 0.85;
+  margin-top: 0.1em;
+}
+
+.tag {
+  display: inline-block;
+  margin-top: 0.4em;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 0.2em 0.5em;
+  border-radius: 6px;
+  font-size: 0.75em;
+  font-weight: bold;
+  color: #fff;
+}
+
+/* Color themes */
+.cell.blue    { background: #3A82F6; }
+.cell.purple  { background: #8E44AD; }
+.cell.green   { background: #27AE60; }
+.cell.teal    { background: #1ABC9C; }
+.cell.orange  { background: #F39C12; }
+.cell.gray    { background: #7F8C8D; }
+</style>
+
+
+
 
 
 
