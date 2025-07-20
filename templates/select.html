@@ -111,6 +111,100 @@
     </div>
   {% endif %}
 
+  {% if df1_row_count is not none %}
+    <div class="filename-display" style="margin-top: 1rem;">
+      Publication Year Range: <strong>{{ year_range }}</strong>
+    </div>
+  {% endif %}
+
+
+
+
+
+
+
+
+
+{% if df9_data %}
+  <div style="display: flex; justify-content: center; margin-top: 3em;">
+    <div style="
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 2em;
+      max-width: 800px;
+      width: 100%;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+    ">
+      <h2 style="text-align: center; margin-bottom: 1.5em;">Padlocks Overview</h2>
+
+      <!-- Primary fields -->
+      <div><strong>Strand:</strong> {{ df9_data['strand'] }}</div>
+      <div><strong>Number of studies:</strong> {{ df9_data['number_of_studies'] }}</div>
+      <div><strong>Initial padlock:</strong> {{ df9_data['number_of_studies_padlock_scale'] }}</div>
+
+      <hr style="margin: 1.5em 0;">
+
+      <!-- Grouped metrics -->
+      <div style="
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        row-gap: 1em;
+        column-gap: 2em;
+      ">
+        <div>
+          <strong>% since 2000:</strong> {{ df9_data['%_since_2000'] }}<br>
+          <strong>Padlock scale:</strong> {{ df9_data['%_since_2000_padlock_scale'] }}
+        </div>
+        <div>
+          <strong>% Randomised:</strong> {{ df9_data['%_randomised'] }}<br>
+          <strong>Padlock scale:</strong> {{ df9_data['%_randomised_padlock_scale'] }}
+        </div>
+        <div>
+          <strong>% high Ecologically Valid:</strong> {{ df9_data['%_high_eco_valid'] }}<br>
+          <strong>Padlock scale:</strong> {{ df9_data['%_high_eco_valid_padlock_scale'] }}
+        </div>
+        <div>
+          <strong>% Independently Evaluated:</strong> {{ df9_data['%_indep_eval'] }}<br>
+          <strong>Padlock scale:</strong> {{ df9_data['%_indep_eval_padlock_scale'] }}
+        </div>
+        <div>
+          <strong>% Median attrition Reported:</strong> {{ df9_data['%_median_attrit_reported'] }}<br>
+          <strong>Padlock scale:</strong> {{ df9_data['%_median_attrit_reported_padlock_scale'] }}
+        </div>
+        <div>
+          <strong>Final Padlock:</strong> {{ df9_data['New_padlock'] }}<br>
+          <strong>MA floor:</strong> {{ df9_data['MA_floor'] }}
+        </div>
+      </div>
+    </div>
+  </div>
+{% endif %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   <!-- data-frames table -->
   <table class="tile-table">
     <thead>

@@ -120,7 +120,7 @@ def create_csv(
 
     # build kwargs accepted by *this* make_dataframe_N
     sig = inspect.signature(fn).parameters
-    kwargs = {"save_file": True, "clean_cols": False}
+    kwargs = {"save_file": True, "clean_cols": True}
     if "output_dir" in sig: kwargs["output_dir"] = output_dir
     for k, v in extras.items():
         if k in sig: kwargs[k] = v       # only pass names the method expects

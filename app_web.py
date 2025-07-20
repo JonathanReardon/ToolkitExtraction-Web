@@ -8,6 +8,8 @@ from flask import (
 
 from eefdata.src.funcs import JSONDataExtractor, DataFrameCompilation
 import json
+import pandas as pd
+import ast
 
 from eefdata.api import create_csv, list_tiles
 
@@ -29,6 +31,8 @@ def run_tile(json_path: Path, tile_id: int, *, strand: str | None = None) -> Pat
 def select_page():
     filename = None
     df1_row_count = None
+    year_range = None
+    df9_row_data = None
 
     if request.method == "POST":
         f = request.files.get("json_file")
@@ -48,9 +52,38 @@ def select_page():
         extractor = JSONDataExtractor(json_path=save_path)
         compiler = DataFrameCompilation(extractor)
         df1, _ = compiler.make_dataframe_1(save_file=False)
+        df9, _ = compiler.make_dataframe_9(save_file=False)
 
         # Get row count for the template
         df1_row_count = len(df1)
+
+        if df1 is not None and 'pub_year' in df1.columns:
+            years = pd.to_numeric(df1['pub_year'], errors='coerce').dropna()
+            if not years.empty:
+                year_range = f"{int(years.min())} - {int(years.max())}"
+            else:
+                year_range = "NA"
+        else:
+            year_range = "NA"
+
+        # Clean strand values whether they're actual lists or stringified lists
+        def clean_strand(x):
+            if isinstance(x, list):
+                return x[0]
+            elif isinstance(x, str) and x.startswith("[") and x.endswith("]"):
+                try:
+                    val = ast.literal_eval(x)
+                    return val[0] if isinstance(val, list) else val
+                except (ValueError, SyntaxError):
+                    return x
+            return x
+
+        if df9 is not None and not df9.empty:
+            df9['strand'] = df9['strand'].apply(clean_strand)  # apply once, handles both cases
+            df9_row_data = df9.iloc[0].to_dict()
+        else:
+            df9_row_data = {}
+
 
     else:
         filename = request.args.get("filename")
@@ -62,6 +95,8 @@ def select_page():
         filename=filename,
         tiles=tiles,
         df1_row_count=df1_row_count,
+        year_range = year_range,
+        df9_data=df9_row_data
     )
 
 
